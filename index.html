@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/475566af2a.js" crossorigin="anonymous"></script>
+
+    <title>Calorie Counter</title>
+</head>
+
+<body class="bg-green-100 p-10">
+    <div class="max-w-md mx-auto bg-white p-6 rounded shadow">
+        <h1 class="text-2xl text-black font-bold mb-4 text-center">
+            <i class="fa-solid fa-bowl-food text-3xl"></i> Calorie Counter
+        </h1>
+
+        <div id="error_msg"></div>
+
+        <div class="bg-gray-200 rounded h-6 w-full mb-4">
+            <div id="progress_bar" class="bg-green-500 h-6 rounded text-center text-white text-sm transition-all"
+                style="width: 0%">
+                0%
+            </div>
+        </div>
+
+        <form id="food_form" class="mb-4">
+            <input type="text" id="food_item" placeholder="Food item" class="border p-2 w-full mb-2 rounded" required />
+            <button type="submit" class="bg-green-500 text-white p-2 w-full rounded hover:bg-green-600">
+                Add Food <i class="fa-solid fa-plus"></i>
+            </button>
+        </form>
+
+        <ul id="item" class="mb-4 space-y-2"></ul>
+
+        <div class="text-lg font-bold mb-4">
+            Total Calories: <span id="total_calories">0</span>
+        </div>
+
+        <button id="reset_btn" class="bg-red-500 text-white p-2 w-full rounded hover:bg-red-600">
+            Reset
+        </button>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
