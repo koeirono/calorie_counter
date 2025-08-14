@@ -15,13 +15,6 @@ function showError(message) {
   errorMsg.innerHTML = `<div class="bg-red-200 text-red-800 p-2 rounded mb-2">${message}</div>`;
 }
 
-function updateProgress(total) {
-  const progressBar = document.getElementById("progress_bar");
-  const percent = Math.min((total / calorieGoal) * 100, 100);
-  progressBar.style.width = `${percent}%`;
-  progressBar.textContent = `${Math.floor(percent)}%`;
-}
-
 function render() {
   foodList.innerHTML = "";
   let total = 0;
@@ -90,6 +83,14 @@ function render() {
   totalCalories.textContent = total;
   updateProgress(total);
 }
+
+function updateProgress(total) {
+  const progressBar = document.getElementById("progress_bar");
+  const percent = Math.min((total / calorieGoal) * 100, 100);
+  progressBar.style.width = `${percent}%`;
+  progressBar.textContent = `${Math.floor(percent)}%`;
+}
+
 
 async function fetchCalories(foodName) {
   try {
