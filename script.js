@@ -55,6 +55,7 @@ function render() {
     li.querySelectorAll("button")[1].addEventListener("click",()=>{
         if(confirm(`Are you sure you want to remove ${food.name}?`)){
             foods = foods.filter((f)=> f.id !== food.id);
+            render();
         }
     });
 
