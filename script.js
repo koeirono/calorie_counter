@@ -15,11 +15,19 @@ function showError(message) {
   errorMsg.innerHTML = `<div class="bg-red-200 text-red-800 p-3 rounded mb-2 ">${message} </div>`;
 }
 
-function updateProgress(total){
-    const progressBar = document.getElementById("progress_bar");
-    const percent = Math.min((total/calorieGoal)*100,100);
-    progressBar.style.width = `${percent}%`;
-    progressBar.textContent = `${Math.floor(percent)}%`;
+function updateProgress(total) {
+  const progressBar = document.getElementById("progress_bar");
+  const percent = Math.min((total / calorieGoal) * 100, 100);
+  progressBar.style.width = `${percent}%`;
+  progressBar.textContent = `${Math.floor(percent)}%`;
+}
+const savedFoods = localStorage.getItem("foods");
+if (savedFoods) {
+  foods = JSON.parse(savedFoods);
+}
+
+function saveFoods() {
+  localStorage.setItem("foods", JSON.stringify(foods));
 }
 
 function render() {
@@ -38,25 +46,27 @@ function render() {
         </div>`;
 
 
-    async function editFood(food){
-        const newName = prompt("Edit food name:", food.name);
-        if(!newName) return;
-        const newCalories = await fetchCalories(newName);
-        if(newCalories === 0) return;
-        food.name = newName
-        food.calories = Math.round(newCalories);
-        render();
+    async function editFood(food) {
+      const newName = prompt("Edit food name:", food.name);
+      if (!newName) return;
+      const newCalories = await fetchCalories(newName);
+      if (newCalories === 0) return;
+      food.name = newName
+      food.calories = Math.round(newCalories);
+      saveFoods();
+      render();
 
     }
 
-    li.querySelectorAll("button")[0].addEventListener("click",() =>{
-        editFood(food);
+    li.querySelectorAll("button")[0].addEventListener("click", () => {
+      editFood(food);
     });
-    li.querySelectorAll("button")[1].addEventListener("click",()=>{
-        if(confirm(`Are you sure you want to remove ${food.name}?`)){
-            foods = foods.filter((f)=> f.id !== food.id);
-            render();
-        }
+    li.querySelectorAll("button")[1].addEventListener("click", () => {
+      if (confirm(`Are you sure you want to remove ${food.name}?`)) {
+        foods = foods.filter((f) => f.id !== food.id);
+        saveFoods();
+        render();
+      }
     });
 
     foodList.appendChild(li);
@@ -68,35 +78,35 @@ function render() {
 }
 
 
-    async function fetchCalories(foodName) {
-      try {
-        const response = await fetch(
-          "https://trackapi.nutritionix.com/v2/natural/nutrients",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "x-app-id": API_ID,
-              "x-app-key": API_KEY,
-            },
-            body: JSON.stringify({ query: foodName }),
-          }
-        );
-        if (!response.ok) {
-          throw new Error("API request failed");
-        }
-
-        const data = await response.json();
-        return data.foods[0].nf_calories;
-      } catch (error) {
-        showError("Failed to fetch calories");
+async function fetchCalories(foodName) {
+  try {
+    const response = await fetch(
+      "https://trackapi.nutritionix.com/v2/natural/nutrients",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-app-id": API_ID,
+          "x-app-key": API_KEY,
+        },
+        body: JSON.stringify({ query: foodName }),
       }
+    );
+    if (!response.ok) {
+      throw new Error("API request failed");
     }
 
-foodForm.addEventListener("submit", async (e)=>{
+    const data = await response.json();
+    return data.foods[0].nf_calories;
+  } catch (error) {
+    showError("Failed to fetch calories");
+  }
+}
+
+foodForm.addEventListener("submit", async (e) => {
   e.preventDefault();
   const name = foodItem.value.trim();
-  if(!name) return;
+  if (!name) return;
 
   const calories = await fetchCalories(name);
   if (calories === null) return;
@@ -107,6 +117,7 @@ foodForm.addEventListener("submit", async (e)=>{
     calories: Math.round(calories),
   });
 
+  saveFoods();
   foodItem.value = "";
   render();
 });
@@ -114,6 +125,7 @@ foodForm.addEventListener("submit", async (e)=>{
 resetBtn.addEventListener("click", () => {
   if (confirm("Are you sure you want to reset the list?")) {
     foods = [];
+    saveFoods();
     render();
   }
 });
